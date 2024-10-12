@@ -5,6 +5,7 @@ const studentModel = require('../models/studentModel');
 const adminModel = require('../models/adminModel');
 const mentorModel = require('../models/mentorModel');
 const companyModel = require('../models/companyModel');
+const { getToken } = require('../middleware/authMiddleware');
 const Login = async (req, res) => {
     try {
         const {email, password} = req.body;
@@ -22,10 +23,22 @@ const Login = async (req, res) => {
                 message: "Invalid Username or Password"
             });
         }
-        res.status(httpStatusCode.OK).json({
-            status: true,
-            message: "Login Successfull"
+        if(isMatch){
+            const token = await getToken(user);
+            res.cookie('token',token);
+            res.status(httpStatusCode.OK).json({
+                status: true,
+                message: "Login Successfull",
+                data:{user, token}
+            });
+
+        }else {
+            return res.status(httpStatusCode.UNAUTHORIZED).json({
+                status: false,
+                message: "Invalid Username or Password"
         });
+    }
+        
 
 
     } catch (error) {
@@ -38,7 +51,7 @@ const Login = async (req, res) => {
 
 const Register = async (req, res) => {
     try {
-        const { email, password, role,username } = req.body;
+        const { email, password, role, username } = req.body;
 
         const existingUser = await userModel.findOne({ email });
         if (existingUser) {
@@ -93,6 +106,8 @@ const Register = async (req, res) => {
             email,
             password: hashedPassword,
             role,
+            isprofilecompleted: false,
+            userId: user._id
         })
         if(!user){
             return res.status(httpStatusCode.BAD_REQUEST).json({

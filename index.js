@@ -8,12 +8,16 @@ const path = require('path');
 dotenv.config();
 
 const authRoutes  = require('./routes/authRoutes');
+const socialPlateformRoutes = require('./routes/socialPlateformRoutes');
+const studentDetailsRoutes = require('./routes/studentDetailsRoutes');
 
 // Connect to MongoDB
 const {dbConnection} = require('./config/db');
 const {PORT, MONGO_URI} = process.env;
 
 dbConnection(MONGO_URI);
+
+
 
 
 // Middleware
@@ -31,6 +35,11 @@ app.use(cors({
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/social', socialPlateformRoutes)
+app.use('/student', studentDetailsRoutes);
+
+// Serve static files (images) from the 'uploads' folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const port = PORT || 8000;
 app.listen(port, () => {

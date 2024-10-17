@@ -66,6 +66,10 @@ const studentModel = new mongoose.Schema(
         ref: "Blog",
       },
     ],
+    education:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AddEducation"
+    }
   },
   {
     timestamps: true,

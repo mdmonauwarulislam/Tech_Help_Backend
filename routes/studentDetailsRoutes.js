@@ -4,6 +4,7 @@ const {
   getStudentDetails,
   updateStudentProfile,
 } = require("../controllers/studentController");
+
 const { verifyToken } = require("../middleware/authMiddleware");
 const upload = require("../middleware/multerMiddle");
 const {

@@ -3,6 +3,7 @@ const Router = express.Router();
 const {
   getStudentDetails,
   updateStudentProfile,
+  updateStudentSkills
 } = require("../controllers/studentController");
 const { verifyToken } = require("../middleware/authMiddleware");
 const upload = require("../middleware/multerMiddle");
@@ -17,6 +18,7 @@ const {
   getSchoolEducation,
   getCollegeEducation,
   getEducationList,
+  deleteEducation
 } = require("../controllers/addEducationController");
 const {
   addProject,
@@ -53,6 +55,13 @@ const {
   getSingleAchievement,
 } = require("../controllers/achievementController");
 
+const {
+  addSkills,
+  getAllSkills,
+  updateUserDetails,
+  deleteUserDetails
+} = require("../controllers/skillControllers");
+
 Router.get("/getstudentdetails", verifyToken, getStudentDetails);
 Router.put(
   "/upadatestudentdetails",
@@ -60,6 +69,7 @@ Router.put(
   upload.single("profileImage"),
   updateStudentProfile
 );
+Router.put("/updateStudentSkills", verifyToken, updateStudentSkills);
 
 //upload the profile image
 Router.post("/upload-profile", upload.single("profileImage"));
@@ -79,6 +89,7 @@ Router.post("/addSchoolEducation", verifyToken, addSchoolEducation);
 Router.get("/getCollegeEducation", verifyToken, getCollegeEducation);
 Router.get("/getSchoolEducation", verifyToken, getSchoolEducation);
 Router.get("/getEducationList", verifyToken, getEducationList);
+Router.delete("/deleteEducation/:id", verifyToken, deleteEducation);
 
 // Routes of the Projects
 Router.post("/addProject", verifyToken, addProject);
@@ -110,5 +121,11 @@ Router.post("/addCertification", verifyToken, addCertification);
 Router.get("/getAllCertifications", verifyToken, getAllCertifications);
 Router.put("/updateCertification/:id", verifyToken, updateCertification);
 Router.delete("/deleteCertification/:id", verifyToken, deleteCertification);
+
+// Routes of the skills
+Router.post("/addSkills", addSkills);
+Router.get("/getAllSkills", getAllSkills);
+Router.put("/updateUserDetails/:id", updateUserDetails);
+Router.delete("/deleteUserDetails/:id",  deleteUserDetails);
 
 module.exports = Router;

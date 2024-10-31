@@ -1,20 +1,45 @@
 const httpsStatusCode = require('../constant/httpsStatusCode');
 const studentModel = require('../models/studentModel');
 
-
+const updateStudentSkills =  async (req, res) => {
+    try {
+        const {skills} = req.body;
+        const userId = req.user.user.userId;
+        const student = await studentModel.findByIdAndUpdate(userId, {
+            skills: skills
+        }, {new: true});
+        if(!student){
+            return res.status(httpsStatusCode.BAD_REQUEST).json({
+                status: false,
+                message: "Student not found"
+            });
+        }
+        return res.status(httpsStatusCode.OK).json({
+            status: true,
+            message: "Student found",
+            data: student
+        });
+        
+    } catch (error) {
+        return res.status(httpsStatusCode.BAD_REQUEST).json({
+            status: false,
+            message: error.message
+        });
+        
+    }
+}
 const updateStudentProfile = async (req, res) =>{
     
     try {
-        const {username, profilePicture,domainOfIntrest, university, graduationYear, skills,hometstate, githubProfile,linkedinProfile} = req.body;
+        const {username, profilePicture,domainOfIntrest, university, graduationYear, hometstate, githubProfile,linkedinProfile} = req.body;
         console.log("req",req.body)
-        console.log(username, profilePicture,domainOfIntrest, university, graduationYear, skills,hometstate, githubProfile,linkedinProfile)
+        console.log(username, profilePicture,domainOfIntrest, university, graduationYear,hometstate, githubProfile,linkedinProfile)
         let student = await studentModel.findByIdAndUpdate(req.user.user.userId,{
             username,
             profilePicture :req.file.filename,
             domainOfIntrest,
             university,
             graduationYear,
-            skills,
             hometstate,
             githubProfile,
             linkedinProfile
@@ -75,4 +100,4 @@ const getStudentDetails = async (req, res) => {
 
 
 
-module.exports = {getStudentDetails, updateStudentProfile};
+module.exports = {getStudentDetails, updateStudentProfile, updateStudentSkills};

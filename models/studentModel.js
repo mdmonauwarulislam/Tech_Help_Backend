@@ -66,6 +66,12 @@ const studentModel = new mongoose.Schema(
         ref: "Blog",
       },
     ],
+    skills: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Skill",
+      }
+    ],
     education:{
       type: mongoose.Schema.Types.ObjectId,
       ref: "AddEducation"

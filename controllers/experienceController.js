@@ -5,7 +5,6 @@ const httpsStatusCode = require('../constant/httpsStatusCode');
 const addWorkExperience = async (req, res) => {
   try {
     const { companyName, internshipType, companyLink, internshipTitle, location, startDate, endDate, currentlyWorking, projectDetails,  skills, certificateLink } = req.body;
-    console.log(req.body);
     const workExperience = await experienceModel.create({
       companyName,
       internshipType,

@@ -12,6 +12,9 @@ const blogSchema = new mongoose.Schema({
     image:{
         type: String,
     },
+    category:{
+      type: String,  
+    },
     createdBy:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

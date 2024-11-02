@@ -1,15 +1,18 @@
 const express = require("express");
 const Router = express.Router();
+
 const {
   getStudentDetails,
   updateStudentProfile,
 } = require("../controllers/studentController");
+
 const { verifyToken } = require("../middleware/authMiddleware");
 const upload = require("../middleware/multerMiddle");
 const {
   createDomainOfIntrest,
   getDomainOfIntrest,
 } = require("../controllers/domainOfIntrestController");
+
 const { addDegree, getDegree } = require("../controllers/degreeController");
 const {
   addCollegeEducation,
@@ -18,24 +21,27 @@ const {
   getCollegeEducation,
   getEducationList,
 } = require("../controllers/addEducationController");
+
 const {
   addProject,
   getProjects,
   updateProject,
   deleteProject,
 } = require("../controllers/projectController");
+
 const {
   createResponsibility,
   getAllResponsibilities,
   updateResponsibility,
   deleteResponsibility,
 } = require("../controllers/responsibilityController");
+
 const {
   addWorkExperience,
   getAllWorkExperiences,
   updateWorkExperience,
   deleteWorkExperience,
-  getSingleWorkExperience
+  getSingleWorkExperience,
 } = require("../controllers/experienceController");
 
 const {
@@ -97,7 +103,11 @@ Router.post("/addWorkExperience", verifyToken, addWorkExperience);
 Router.get("/getWorkExperiences", verifyToken, getAllWorkExperiences);
 Router.put("/updateWorkExperience/:id", verifyToken, updateWorkExperience);
 Router.delete("/deleteWorkExperience/:id", verifyToken, deleteWorkExperience);
-Router.get("/getSingleWorkExperience/:id", verifyToken, getSingleWorkExperience);
+Router.get(
+  "/getSingleWorkExperience/:id",
+  verifyToken,
+  getSingleWorkExperience
+);
 
 // Routes of the achievements
 Router.post("/addAchievement", verifyToken, addAchievement);

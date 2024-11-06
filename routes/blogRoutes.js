@@ -6,5 +6,6 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 Router.post("/createblog", verifyToken, createBlog);
 Router.get("/getblogs", verifyToken, getBlogs);
+Router.get("/getallblogs", verifyToken,getBlogs);
 
 module.exports = Router;

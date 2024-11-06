@@ -88,4 +88,29 @@ const getBlogs = async (req, res) => {
   }
 };
 
-module.exports = { createBlog, getBlogs };
+
+const getAllBlogs = async (req, res) => {
+  try {
+    const blogs = await Blog.find(); 
+    if (!blogs) {
+      return res.status(httpsStatusCode.NOT_FOUND).json({
+        error: true,
+        success: false,
+        message: "No blog found",
+      });
+    }
+    return res.status(httpsStatusCode.OK).json({
+      error: false,
+      success: true,
+      data: blogs,
+    });
+  } catch (error) {
+    res.status(httpsStatusCode.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      error: true,
+      message: error.message || error,
+    });
+  }
+}
+
+module.exports = { createBlog, getBlogs, getAllBlogs };

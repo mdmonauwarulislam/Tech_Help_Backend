@@ -1,6 +1,9 @@
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 const httpsStatusCode = require("../constant/httpsStatusCode");
 const Blog = require("../models/blogModel");
 const studentModel = require("../models/studentModel");
+const userModel = require("../models/userModel");
 
 const createBlog = async (req, res) => {
   try {
@@ -9,7 +12,7 @@ const createBlog = async (req, res) => {
 
     // Retrieve the user's ID from the authenticated request
     const userId = req.user?.user?.userId;
-    console.log("User ID:", userId);
+    console.log("User ID in blog:", userId);
 
     // Check if the user ID is available, otherwise return an error
     if (!userId) {
@@ -91,26 +94,51 @@ const getBlogs = async (req, res) => {
 
 const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find(); 
-    if (!blogs) {
-      return res.status(httpsStatusCode.NOT_FOUND).json({
+    const blogs = await Blog.find();
+    // Use Promise.all to wait for all asynchronous user fetch operations
+    const blogsWithUsers = await Promise.all(
+      blogs.map(async (item) => {
+        const userResponse = await userModel.find({userId:item.createdBy}); // Fetch user data using the createdById
+        if (userResponse) {
+          let user;
+          if (userResponse[0].role === "student") {
+            // If the user is a student, fetch additional student information
+            const userObjectId= new ObjectId(userResponse[0].userId);
+            user = await studentModel.findById(userObjectId);
+            // console.log("user:", user);
+          }
+         
+          // Return the blog post with the user data
+          return { ...item.toObject(), user }; 
+        } else {
+          return item; // Return the blog if no user is found (handle edge case)
+        }
+      })
+    );
+
+    console.log("blogsWithUsers:", blogsWithUsers);
+
+    // If no blogs were found, return an error
+    if (!blogsWithUsers || blogsWithUsers.length === 0) {
+      return res.status(404).json({
         error: true,
         success: false,
         message: "No blog found",
       });
     }
-    return res.status(httpsStatusCode.OK).json({
+    return res.status(200).json({
       error: false,
       success: true,
-      data: blogs,
+      data: blogsWithUsers,
     });
   } catch (error) {
-    res.status(httpsStatusCode.INTERNAL_SERVER_ERROR).json({
+    console.log("Error:", error);
+    res.status(500).json({
       success: false,
       error: true,
       message: error.message || error,
     });
   }
-}
+};
 
 module.exports = { createBlog, getBlogs, getAllBlogs };

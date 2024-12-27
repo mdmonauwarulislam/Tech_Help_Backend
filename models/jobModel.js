@@ -4,57 +4,59 @@ const jobSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      // required: true,
     },
-    description: [{
-        requirement : { type: String, required: true },
-        responsibility: { type: String, required: true },
-  }],
+    description: [
+      {
+        requirement: { type: String },
+        responsibility: { type: String },
+      },
+    ],
     type: {
-        type: String,
-        enum: ["full-time", "part-time", "internship"],
-        required: true,
+      type: String,
+      enum: ["full-time", "part-time", "internship"]
     },
-    salary: [{
-        minimum : { type: Number, required: true },
-        maximum : { type: Number, required: true },
-    }],
+    salary: [
+      {
+        minimum: { type: Number },
+        maximum: { type: Number},
+      },
+    ],
     experience: {
-        type: Number,
-        required: true,
+      type: Number
     },
-    workmode:{
-        type : String,
-        enum : ["remote", "onsite", "hybrid"],
-        required : true
+    workmode: {
+      type: String,
+      enum: ["remote", "onsite", "hybrid"],
+      
     },
     education: {
-        type: String,
-        enum: ["bachelors", "masters", "phd", "other"],
-        required: true,
-    },
-    location: {
-        type: String,
-        required: true,
-    },
-    skills: [{
-        type: String,
-    }],
-    location: {
       type: String,
-      required: true,
+      enum: ["bachelors", "masters", "phd", "other"]
     },
+    location: {
+      type: String
+    },
+    skills: [
+      {
+        type: String,
+      },
+    ],
     applicants: [
       {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
         status: {
           type: String,
           enum: ["pending", "accepted", "rejected"],
-          default: "pending",
+          default: "pending"
         },
         appliedAt: { type: Date, default: Date.now },
       },
     ],
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company"
+    },
   },
   {
     timestamps: true,

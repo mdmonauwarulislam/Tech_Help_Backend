@@ -99,7 +99,7 @@ const getAllBlogs = async (req, res) => {
     const blogsWithUsers = await Promise.all(
       blogs.map(async (item) => {
         const userResponse = await userModel.find({userId:item.createdBy}); // Fetch user data using the createdById
-        if (userResponse) {
+        if (userResponse && userResponse.length > 0) {
           let user;
           if (userResponse[0].role === "student") {
             // If the user is a student, fetch additional student information

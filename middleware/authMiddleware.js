@@ -31,17 +31,27 @@ async function verifyToken(req, res, next){
     }
 }
 
-async function verifyRole(role){
+// async function verifyRole(role){
+//     return (req, res, next) => {
+//         if(req.user.user.role === role){
+//             next();
+//         }else {
+//             return res.status(httpsStatusCode.UNAUTHORIZED).json({
+//                 status: false,
+//                 message: "Unauthorized"
+//             });
+//         }
+//     }
+// }
+
+const verifyRole = (allowedRoles) => {
     return (req, res, next) => {
-        if(req.user.user.role === role){
-            next();
-        }else {
-            return res.status(httpsStatusCode.UNAUTHORIZED).json({
-                status: false,
-                message: "Unauthorized"
-            });
-        }
-    }
-}
+      if (!allowedRoles.includes(req.user.user.role)) {
+        return res.status(403).json({ message: "Access denied. Insufficient permissions." });
+      }
+      next();
+    };
+  };
+  
 
 module.exports = {getToken, verifyToken, verifyRole};

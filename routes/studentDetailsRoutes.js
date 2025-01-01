@@ -4,7 +4,7 @@ const Router = express.Router();
 const {
   getStudentDetails,
   updateStudentProfile,
-  updateStudentSkills
+  updateStudentSkills,
 } = require("../controllers/studentController");
 
 const { verifyToken } = require("../middleware/authMiddleware");
@@ -21,7 +21,7 @@ const {
   getSchoolEducation,
   getCollegeEducation,
   getEducationList,
-  deleteEducation
+  deleteEducation,
 } = require("../controllers/addEducationController");
 
 const {
@@ -65,7 +65,7 @@ const {
   addSkills,
   getAllSkills,
   updateUserDetails,
-  deleteUserDetails
+  deleteUserDetails,
 } = require("../controllers/skillControllers");
 
 Router.get("/getstudentdetails", verifyToken, getStudentDetails);
@@ -136,6 +136,6 @@ Router.delete("/deleteCertification/:id", verifyToken, deleteCertification);
 Router.post("/addSkills", addSkills);
 Router.get("/getAllSkills", getAllSkills);
 Router.put("/updateUserDetails/:id", updateUserDetails);
-Router.delete("/deleteUserDetails/:id",  deleteUserDetails);
+Router.delete("/deleteUserDetails/:id", deleteUserDetails);
 
 module.exports = Router;

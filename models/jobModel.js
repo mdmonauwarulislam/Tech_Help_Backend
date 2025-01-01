@@ -14,7 +14,7 @@ const jobSchema = new mongoose.Schema(
     ],
     type: {
       type: String,
-      enum: ["full-time", "part-time", "internship"]
+      enum: ["Full Time", "Part Time", "Internship"]
     },
     salary: [
       {
@@ -27,12 +27,12 @@ const jobSchema = new mongoose.Schema(
     },
     workmode: {
       type: String,
-      enum: ["remote", "onsite", "hybrid"],
+      enum: ["Remote", "Onsite", "Hybrid"],
       
     },
     education: {
       type: String,
-      enum: ["bachelors", "masters", "phd", "other"]
+      enum: ["High School","Diploma","Bachelors", "Masters", "PhD", "Others"]
     },
     location: {
       type: String

@@ -12,6 +12,7 @@ const socialPlateformRoutes = require('./routes/socialPlateformRoutes');
 const studentDetailsRoutes = require('./routes/studentDetailsRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const jobRoutes = require('./routes/jobRoutes');
+const companyRoutes = require('./routes/companyRoutes');
 
 // Connect to MongoDB
 const {dbConnection} = require('./config/db');
@@ -41,6 +42,8 @@ app.use('/social', socialPlateformRoutes)
 app.use('/student', studentDetailsRoutes);
 app.use('/blog',blogRoutes);
 app.use('/jobs', jobRoutes);
+app.use('/company', companyRoutes);
+app.use('/roadmap', require('./routes/roadmapRoutes'));
 
 // Serve static files (images) from the 'uploads' folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

@@ -22,6 +22,9 @@ const companySchema = new mongoose.Schema(
       type: String,
    
     },
+    companyLogo: {
+      type: String,
+    },
     companyType: {
       type: String,
     

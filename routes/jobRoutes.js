@@ -15,12 +15,12 @@ const {
 const { verifyToken, verifyRole } = require("../middleware/authMiddleware");
 
 Router.post("/createjob", verifyToken, verifyRole(["company"]), createJob);
-Router.get("/getjobs", verifyToken,verifyRole(["Admin", "company", "Student"]), getJobs);
-Router.get("/getjob/:id", verifyToken,verifyRole(["Admin", "company", "Student"]), getJob);
-Router.post("/applyjob/:id", verifyToken,verifyRole(["Student"]), applyJob);
-Router.get("/getappliedjobs", verifyToken,verifyRole(["Student"]), getAppliedJobs);
+Router.get("/getjobs", verifyToken,verifyRole(["admin", "company", "student"]), getJobs);
+Router.get("/getjob/:id", verifyToken,verifyRole(["admin", "company", "student"]), getJob);
+Router.post("/applyjob/:id", verifyToken,verifyRole(["student"]), applyJob);
+Router.get("/getappliedjobs", verifyToken,verifyRole(["student"]), getAppliedJobs);
 Router.get("/getpostedjobs", verifyToken,verifyRole(["company"]), getPostedJobs);
 Router.put("/updatejob/:id", verifyToken, verifyRole(["company"]), updateJob);
-Router.delete("/deletejob/:id", verifyToken,verifyRole(["company", "Admin"]), deleteJob);
+Router.delete("/deletejob/:id", verifyToken,verifyRole(["company", "admin"]), deleteJob);
 
 module.exports = Router;

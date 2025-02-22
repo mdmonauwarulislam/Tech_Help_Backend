@@ -31,9 +31,7 @@ const updateStudentSkills =  async (req, res) => {
 const updateStudentProfile = async (req, res) =>{
     
     try {
-        const {username, profilePicture,domainOfIntrest, university, graduationYear, hometstate, githubProfile,linkedinProfile} = req.body;
-        console.log("req",req.body)
-        console.log(username, profilePicture,domainOfIntrest, university, graduationYear,hometstate, githubProfile,linkedinProfile)
+        const {username, domainOfIntrest, university, graduationYear, hometstate, githubProfile,linkedinProfile} = req.body;
         let student = await studentModel.findByIdAndUpdate(req.user.user.userId,{
             username,
             profilePicture :req.file.filename,
@@ -74,7 +72,7 @@ const getStudentDetails = async (req, res) => {
             return res.status(400).json({ status: false, message: 'Invalid user ID format.' });
         }
         // Find the student document using the userId
-        const student = await studentModel.findById(userId ).populate('domainOfIntrest');
+        const student = await studentModel.findById(userId).populate('domainOfIntrest');
 
         // Check if the student was found
         if (!student) {

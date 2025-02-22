@@ -41,16 +41,28 @@ const addCollegeEducation = async (req, res) => {
       await newEducation.save();
 
       // Add education ID to the student model
-      const updateStudent = await studentModel.findByIdAndUpdate(userId, {
-        education: newEducation._id,
-      });
+      // const updateStudent = await studentModel.findByIdAndUpdate(userId, {
+      //   education: newEducation._id,
+      // });
 
-      if (!updateStudent) {
-        return res.status(httpsStatusCode.BAD_REQUEST).json({
-          success: false,
-          message: "College education not added to the student model",
-        });
-      }
+      // if (!updateStudent) {
+      //   return res.status(httpsStatusCode.BAD_REQUEST).json({
+      //     success: false,
+      //     message: "College education not added to the student model",
+      //   });
+      // }
+
+      // const updateMentor = await mentorModel.findByIdAndUpdate(userId, {
+      //   education: newEducation._id,
+      // });
+      // if (!updateMentor) {
+      //   return res.status(httpsStatusCode.BAD_REQUEST).json({
+      //     success: false,
+      //     message: "College education not added to the mentor model",
+      //   });
+      // }
+
+
 
       return res.status(httpsStatusCode.CREATED).json({
         success: true,

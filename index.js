@@ -13,15 +13,13 @@ const studentDetailsRoutes = require('./routes/studentDetailsRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const jobRoutes = require('./routes/jobRoutes');
 const companyRoutes = require('./routes/companyRoutes');
+const mentorRoutes = require('./routes/Mentorship/mentorshipRoutes');
 
 // Connect to MongoDB
 const {dbConnection} = require('./config/db');
 const {PORT, MONGO_URI} = process.env;
 
 dbConnection(MONGO_URI);
-
-
-
 
 // Middleware
 app.use(bodyParser.urlencoded({extended: true}));
@@ -43,6 +41,7 @@ app.use('/student', studentDetailsRoutes);
 app.use('/blog',blogRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/company', companyRoutes);
+app.use('/mentor', mentorRoutes);
 app.use('/roadmap', require('./routes/roadmapRoutes'));
 
 // Serve static files (images) from the 'uploads' folder

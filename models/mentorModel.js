@@ -1,89 +1,55 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const mentorSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: true,
+  username: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  experties: {
+    type: String,
+  },
+  profilePicture: {
+    type: String,
+    default:
+      "https://res.cloudinary.com/dxkufsejm/image/upload/v1634221237/blank-profile-picture-973460_640_izx7qf.png",
+  },
+  yearofexperience: {
+    type: Number,
+  },
+  company: {
+    type: String,
+  },
+  about: [
+    {
+      type: String,
+      required: true,
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
+  ],
+  language: [
+    {
+      type: String,
+      required: true,
     },
-    profile: {
-        type: String,
-    },
-    yearofexperience: {
-        type: Number,
-    },
-    about : [{
-        type: String,
-        required: true,
-    }],
-    topic : [{
-        type: String,
-    }],
-    skill : [{
-        type: String,
-        required: true,
-    }],
-    language : [{
-        type: String,
-        required: true,
-    }],
-    education : [{
-        institute: {
-            type: String,
-            required: true,
-        },
-        location: {
-            type: String,
-            required: true,
-        },
-        degree: {
-            type: String,
-            required: true,
-        },
-        startYear: {
-            type: Number,
-            required: true,
-        },
-        endYear: {
-            type: Number,
-            required: true,
-        },
-    }],
-    experience : [{
-        companyname: {
-            type: String,
-            required: true,
-        },
-        location: {
-            type: String,
-            required: true,
-        },
-        position: {
-            type: String,
-            required: true,
-        },
-        startYear: {
-            type: Number,
-            required: true,
-        },
-        endYear: {
-            type: Number,
-            required: true,
-        },
-    }],
-    password: {
-        type: String,
-        required: true,
-    },
-    availibility: {
-        type: Boolean,
-    },
+  ],
+  education:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AddEducation"
+  },
+  experience: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "AddExperience"
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  availability: [{ type: String }],
+});
 
-})
-
-module.exports = mongoose.model('Mentor', mentorSchema);
+module.exports = mongoose.model("Mentor", mentorSchema);

@@ -24,6 +24,10 @@ const studentModel = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "SkillDomain",
     }],
+    bookings: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Booking"
+    }],
     university: {
       type: String,
     },

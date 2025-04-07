@@ -31,20 +31,37 @@ const mentorSchema = new mongoose.Schema({
       required: true,
     },
   ],
-  language: [
+  languages: [
     {
       type: String,
       required: true,
     },
   ],
-  education:{
+  skills: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  category: { type: String, required: true },
+  education:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: "AddEducation"
-  },
-  experience: {
+  }],
+  experience: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "AddExperience"
-  },
+    ref: "WorkExperience"
+  }],
+  services : [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service"
+    }
+  ],  
+  bookings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Booking"
+  }],
   password: {
     type: String,
     required: true,

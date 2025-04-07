@@ -66,7 +66,7 @@ const getMentorProfile = async (req, res) => {
 // Update Mentor Profile
 const updateMentorProfile = async (req, res) => {
   try {
-    const { username, experties, yearofexperience, company, about, language } = req.body;
+    const { username, experties, yearofexperience, company, about, category, languages, skills } = req.body;
     const mentorId = req.user.user.userId;
     let mentor = await mentorModel.findByIdAndUpdate(
       mentorId,
@@ -77,7 +77,9 @@ const updateMentorProfile = async (req, res) => {
         yearofexperience,
         company,
         about,
-        language,
+        languages,
+        category,
+        skills,
       },
       { new: true }
     );
@@ -101,7 +103,39 @@ const updateMentorProfile = async (req, res) => {
   }
 };
 
+const getMentors = async (req, res) => {
+  try {
+    const { category } = req.query;
+    let query = {};
+    if (category && category !== "All") {
+      query.category = category;
+    }
+
+    const mentors = await mentorModel.find(query);
+    res.status(200).json({ success: true, data: mentors });
+  } catch (error) {
+    console.error("Error fetching mentors:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const getMentorById = async (req, res) => {
+  try {
+    const { mentorId } = req.params;
+    const mentor = await mentorModel.findById(mentorId).populate('services').populate('education').populate('experience');
+    if (!mentor) {
+      return res.status(404).json({ success: false, message: "Mentor not found" });
+    }
+    res.status(200).json({ success: true, data: mentor });
+  } catch (error) {
+    console.error("Error fetching mentor:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   getMentorProfile,
   updateMentorProfile,
+  getMentors,
+  getMentorById
 };

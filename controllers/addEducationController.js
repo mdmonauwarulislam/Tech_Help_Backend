@@ -1,8 +1,10 @@
 const httpsStatusCode = require("../constant/httpsStatusCode");
 const addEducationModel = require("../models/addEducationModel");
 const studentModel = require("../models/studentModel");
+const mentorModel = require("../models/mentorModel");
 const mongoose = require("mongoose");
 
+// Add College Education (for both Student & Mentor)
 const addCollegeEducation = async (req, res) => {
   try {
     const { university, studyfield, degree, grade, startyear, endyear } = req.body;
@@ -15,21 +17,21 @@ const addCollegeEducation = async (req, res) => {
       });
     }
 
-    // Ensure `degree` is either a valid ObjectId or `null`
+    // Ensure `degree` is a valid ObjectId or `null`
     const degreeValue = degree && mongoose.Types.ObjectId.isValid(degree) ? degree : null;
 
-    // Find if the user has an existing education document
+    // Check if the user already has an education document
     let existingEducation = await addEducationModel.findOne({ user: userId });
 
-    // If no education document exists, create one
     if (!existingEducation) {
+      // Create new education record
       const newEducation = new addEducationModel({
         user: userId,
         college: [
           {
             collegeName: university,
             fieldOfStudy: studyfield,
-            degree, 
+            degree: degreeValue,
             grade,
             startYear: startyear,
             endYear: endyear,
@@ -37,32 +39,11 @@ const addCollegeEducation = async (req, res) => {
         ],
       });
 
-      // Save the new education document
       await newEducation.save();
 
-      // Add education ID to the student model
-      // const updateStudent = await studentModel.findByIdAndUpdate(userId, {
-      //   education: newEducation._id,
-      // });
-
-      // if (!updateStudent) {
-      //   return res.status(httpsStatusCode.BAD_REQUEST).json({
-      //     success: false,
-      //     message: "College education not added to the student model",
-      //   });
-      // }
-
-      // const updateMentor = await mentorModel.findByIdAndUpdate(userId, {
-      //   education: newEducation._id,
-      // });
-      // if (!updateMentor) {
-      //   return res.status(httpsStatusCode.BAD_REQUEST).json({
-      //     success: false,
-      //     message: "College education not added to the mentor model",
-      //   });
-      // }
-
-
+      // Add education reference to Student and Mentor models
+      await studentModel.findByIdAndUpdate(userId, { education: newEducation._id });
+      await mentorModel.findByIdAndUpdate(userId, { education: newEducation._id });
 
       return res.status(httpsStatusCode.CREATED).json({
         success: true,
@@ -71,17 +52,16 @@ const addCollegeEducation = async (req, res) => {
       });
     }
 
-    // If education document exists, push new college entry into the college array
+    // If education exists, update it
     existingEducation.college.push({
       collegeName: university,
       fieldOfStudy: studyfield,
-      degree,  
+      degree: degreeValue,
       grade,
       startYear: startyear,
       endYear: endyear,
     });
 
-    // Save the updated education document
     await existingEducation.save();
 
     return res.status(httpsStatusCode.OK).json({
@@ -98,7 +78,7 @@ const addCollegeEducation = async (req, res) => {
   }
 };
 
-
+// Add School Education (for both Student & Mentor)
 const addSchoolEducation = async (req, res) => {
   try {
     const { schoolname, classof, passoutyear, finalgrade } = req.body;
@@ -111,12 +91,11 @@ const addSchoolEducation = async (req, res) => {
       });
     }
 
-    const existingEducation = await addEducationModel.findOne({ user: userId });
+    let existingEducation = await addEducationModel.findOne({ user: userId });
 
-    let addNewSchoolEducation;
     if (!existingEducation) {
-      // If no education exists for the user, create a new entry with the school details
-      addNewSchoolEducation = await addEducationModel.create({
+      // Create new education record
+      existingEducation = new addEducationModel({
         user: userId,
         school: [
           {
@@ -127,35 +106,34 @@ const addSchoolEducation = async (req, res) => {
           },
         ],
       });
-    } else {
-      // If education exists, update the school array
-      addNewSchoolEducation = await addEducationModel.findByIdAndUpdate(
-        existingEducation._id,
-        {
-          $push: {
-            school: {
-              schoolName: schoolname,
-              classof,
-              yearOfPassing: passoutyear,
-              grade: finalgrade,
-            },
-          },
-        },
-        { new: true } // Return the updated document
-      );
-    }
 
-    if (!addNewSchoolEducation) {
-      return res.status(httpsStatusCode.BAD_REQUEST).json({
-        success: false,
-        message: "School Education not added",
+      await existingEducation.save();
+
+      // Add education reference to Student and Mentor models
+      await studentModel.findByIdAndUpdate(userId,  {$push:{ education: existingEducation._id }});
+      await mentorModel.findByIdAndUpdate(userId, {$push:{ education: existingEducation._id }});
+
+      return res.status(httpsStatusCode.CREATED).json({
+        success: true,
+        message: "School education added successfully",
+        data: existingEducation,
       });
     }
 
-    return res.status(httpsStatusCode.CREATED).json({
+    // If education exists, update it
+    existingEducation.school.push({
+      schoolName: schoolname,
+      classof,
+      yearOfPassing: passoutyear,
+      grade: finalgrade,
+    });
+
+    await existingEducation.save();
+
+    return res.status(httpsStatusCode.OK).json({
       success: true,
-      message: "School Education added successfully",
-      data: addNewSchoolEducation,
+      message: "School education updated successfully",
+      data: existingEducation,
     });
   } catch (error) {
     return res.status(httpsStatusCode.INTERNAL_SERVER_ERROR).json({
@@ -166,7 +144,7 @@ const addSchoolEducation = async (req, res) => {
   }
 };
 
-// Get college education details
+// Get College Education (for both Student & Mentor)
 const getCollegeEducation = async (req, res) => {
   try {
     const userId = req.user.user.userId;
@@ -180,16 +158,16 @@ const getCollegeEducation = async (req, res) => {
 
     const existingEducation = await addEducationModel.findOne({ user: userId });
 
-    if (!existingEducation) {
-      return res.status(httpsStatusCode.BAD_REQUEST).json({
+    if (!existingEducation || existingEducation.college.length === 0) {
+      return res.status(httpsStatusCode.NOT_FOUND).json({
         success: false,
-        message: "College Education not found",
+        message: "No college education found",
       });
     }
 
     return res.status(httpsStatusCode.OK).json({
       success: true,
-      message: "College Education found successfully",
+      message: "College education retrieved successfully",
       data: existingEducation.college,
     });
   } catch (error) {
@@ -201,10 +179,10 @@ const getCollegeEducation = async (req, res) => {
   }
 };
 
-// Get school education details
+// Get School Education (for both Student & Mentor)
 const getSchoolEducation = async (req, res) => {
   try {
-    const userId = req.user.user._id;
+    const userId = req.user.user.userId;
 
     if (!userId) {
       return res.status(httpsStatusCode.UNAUTHORIZED).json({
@@ -215,16 +193,16 @@ const getSchoolEducation = async (req, res) => {
 
     const existingEducation = await addEducationModel.findOne({ user: userId });
 
-    if (!existingEducation) {
-      return res.status(httpsStatusCode.BAD_REQUEST).json({
+    if (!existingEducation || existingEducation.school.length === 0) {
+      return res.status(httpsStatusCode.NOT_FOUND).json({
         success: false,
-        message: "School Education not found",
+        message: "No school education found",
       });
     }
 
     return res.status(httpsStatusCode.OK).json({
       success: true,
-      message: "School Education found successfully",
+      message: "School education retrieved successfully",
       data: existingEducation.school,
     });
   } catch (error) {
@@ -236,7 +214,7 @@ const getSchoolEducation = async (req, res) => {
   }
 };
 
-// Get education list for a user
+// Get Education List (for both Student & Mentor)
 const getEducationList = async (req, res) => {
   try {
     const userId = req.user.user.userId;
@@ -248,10 +226,12 @@ const getEducationList = async (req, res) => {
       });
     }
 
-    const existingEducation = await addEducationModel.findOne({ user: userId }).populate("college.degree");
+    const existingEducation = await addEducationModel
+      .findOne({ user: userId })
+      .populate("college.degree");
 
     if (!existingEducation) {
-      return res.status(httpsStatusCode.BAD_REQUEST).json({
+      return res.status(httpsStatusCode.NOT_FOUND).json({
         success: false,
         message: "Education not found",
       });
@@ -259,7 +239,7 @@ const getEducationList = async (req, res) => {
 
     return res.status(httpsStatusCode.OK).json({
       success: true,
-      message: "Education found successfully",
+      message: "Education retrieved successfully",
       data: existingEducation,
     });
   } catch (error) {
@@ -271,28 +251,12 @@ const getEducationList = async (req, res) => {
   }
 };
 
+// Delete Education (for both Student & Mentor)
 const deleteEducation = async (req, res) => {
   try {
     const userId = req.user.user.userId;
 
-    if (!userId) {
-      return res.status(httpsStatusCode.UNAUTHORIZED).json({
-        success: false,
-        message: "User must be logged in",
-      });
-    }
-
-    const existingEducation = await addEducationModel.findOne({ user: userId });
-
-    if (!existingEducation) {
-      return res.status(httpsStatusCode.BAD_REQUEST).json({
-        success: false,
-        message: "Education not found",
-      });
-    }
-
-    // Delete the education document
-    await existingEducation.delete();
+    await addEducationModel.deleteOne({ user: userId });
 
     return res.status(httpsStatusCode.OK).json({
       success: true,
@@ -305,6 +269,13 @@ const deleteEducation = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
-module.exports = { addCollegeEducation, addSchoolEducation, getCollegeEducation, getSchoolEducation, getEducationList, deleteEducation };
+module.exports = {
+  addCollegeEducation,
+  addSchoolEducation,
+  getCollegeEducation,
+  getSchoolEducation,
+  getEducationList,
+  deleteEducation,
+};

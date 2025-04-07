@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const MentorSchema = new mongoose.Schema({
   username: { type: String, required: true },
   role: { type: String, default: "Mentor" },
+  profileImage: { type: String },
   currentOrganization: { type: String },
   currentIndustry: { type: String },
   about: { type: String },
@@ -30,6 +31,7 @@ const MentorSchema = new mongoose.Schema({
       endYear: { type: Number },
     },
   ],
+  services: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
 });
 
 module.exports = mongoose.model("Mentor", MentorSchema);

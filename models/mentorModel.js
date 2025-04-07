@@ -28,22 +28,22 @@ const mentorSchema = new mongoose.Schema({
   about: [
     {
       type: String,
-      required: true,
+      
     },
   ],
   languages: [
     {
       type: String,
-      required: true,
+     
     },
   ],
   skills: [
     {
       type: String,
-      required: true,
+      
     },
   ],
-  category: { type: String, required: true },
+  category: { type: String },
   education:[{
     type: mongoose.Schema.Types.ObjectId,
     ref: "AddEducation"

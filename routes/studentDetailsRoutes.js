@@ -70,7 +70,7 @@ const {
 
 Router.get("/getstudentdetails", verifyToken, getStudentDetails);
 Router.put(
-  "/upadatestudentdetails",
+  "/updatestudentdetails",
   verifyToken,
   upload.single("profileImage"),
   updateStudentProfile

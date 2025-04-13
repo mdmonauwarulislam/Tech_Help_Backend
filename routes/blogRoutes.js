@@ -1,20 +1,28 @@
+// blogRoutes.js
 const express = require("express");
-const Router = express.Router();
-const blogController = require("../controllers/likeCommentShareController");
+const router = express.Router();
 const {
   createBlog,
   getBlogs,
   getAllBlogs,
+  likeBlog,
+  shareBlog,
+  bookmarkBlog,
+  addComment,
+  replyToComment,
 } = require("../controllers/blogController");
 const { verifyToken } = require("../middleware/authMiddleware");
 
-Router.post("/createblog", verifyToken, createBlog);
-Router.get("/getblogs", verifyToken, getBlogs);
-Router.get("/getallblogs", verifyToken, getAllBlogs);
+// Public routes
+router.get("/getallblogs", getAllBlogs);
+router.post("/:blogId/share", shareBlog);
 
-// like comment share routes
-Router.post("/:id/like", blogController.toggleLike);
-Router.post("/:id/comment", blogController.addComment);
-Router.post("/:id/share", blogController.updateShare);
+// Authenticated routes
+router.post("/createblog", verifyToken, createBlog);
+router.get("/getblogs", verifyToken, getBlogs);
+router.post("/:blogId/like", verifyToken, likeBlog);
+router.post("/:blogId/bookmark", verifyToken, bookmarkBlog);
+router.post("/:blogId/comment", verifyToken, addComment);
+router.post("/:blogId/comment/:commentId/reply", verifyToken, replyToComment);
 
-module.exports = Router;
+module.exports = router;

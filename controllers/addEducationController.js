@@ -7,7 +7,14 @@ const mongoose = require("mongoose");
 // Add College Education (for both Student & Mentor)
 const addCollegeEducation = async (req, res) => {
   try {
-    const { university, studyfield, degree, grade, startyear, endyear } = req.body;
+    const {
+      university,
+      studyfield,
+      degree,
+      grade,
+      startyear,
+      endyear,
+    } = req.body;
     const userId = req.user.user.userId;
 
     if (!userId) {
@@ -18,7 +25,8 @@ const addCollegeEducation = async (req, res) => {
     }
 
     // Ensure `degree` is a valid ObjectId or `null`
-    const degreeValue = degree && mongoose.Types.ObjectId.isValid(degree) ? degree : null;
+    const degreeValue =
+      degree && mongoose.Types.ObjectId.isValid(degree) ? degree : null;
 
     // Check if the user already has an education document
     let existingEducation = await addEducationModel.findOne({ user: userId });
@@ -42,8 +50,12 @@ const addCollegeEducation = async (req, res) => {
       await newEducation.save();
 
       // Add education reference to Student and Mentor models
-      await studentModel.findByIdAndUpdate(userId, { education: newEducation._id });
-      await mentorModel.findByIdAndUpdate(userId, { education: newEducation._id });
+      await studentModel.findByIdAndUpdate(userId, {
+        education: newEducation._id,
+      });
+      await mentorModel.findByIdAndUpdate(userId, {
+        education: newEducation._id,
+      });
 
       return res.status(httpsStatusCode.CREATED).json({
         success: true,
@@ -110,8 +122,12 @@ const addSchoolEducation = async (req, res) => {
       await existingEducation.save();
 
       // Add education reference to Student and Mentor models
-      await studentModel.findByIdAndUpdate(userId,  {$push:{ education: existingEducation._id }});
-      await mentorModel.findByIdAndUpdate(userId, {$push:{ education: existingEducation._id }});
+      await studentModel.findByIdAndUpdate(userId, {
+        $push: { education: existingEducation._id },
+      });
+      await mentorModel.findByIdAndUpdate(userId, {
+        $push: { education: existingEducation._id },
+      });
 
       return res.status(httpsStatusCode.CREATED).json({
         success: true,
